@@ -14,14 +14,12 @@ export class BenchModule extends Results{
 
     };
     runTest (){
+        console.log(this.methodCollection,this.methodObject)
         for (let i = 0; i < this.methodCollection.length; i++ ) {
-            console.log(this.methodCollection)
             let methodName = this.methodCollection[i]
             for (let j = 0; j < this.runCount; j++) {
-
                 const child = fork(this.runFile);
                 child.on('message', ({type, data}) => {
-
                     switch (true) {
                         case type === 1:
                             child.send({
@@ -45,7 +43,7 @@ export class BenchModule extends Results{
 
         }
 
-            this.showResult();
+        this.showResult();
 
     }
 
