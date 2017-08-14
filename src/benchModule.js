@@ -80,3 +80,4 @@ function getData (data){
     });
     return dataArray;
 }
+
