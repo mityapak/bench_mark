@@ -6,7 +6,9 @@
   "scripts": {
     "build": "gulp --harmony --gulpfile gulpfile.js default"
   },
-  "dependencies": {},
+  "dependencies": {
+    "table": "^4.0.1"
+  },
   "devDependencies": {
     "gulp": "*",
     "gulp-sourcemaps": "*",
@@ -17,8 +19,6 @@
     "babel": "5.*",
     "source-map-support": "*"
   },
-
-
   "maintainers": [
     ""
   ],
