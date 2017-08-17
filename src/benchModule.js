@@ -1,7 +1,6 @@
 import {fork} from 'child_process';
 import Result from './result';
 import {table} from 'table';
-import util from 'util';
 import {getMethodsArray} from './getTest'
 
 export default class BenchModule extends Result {
