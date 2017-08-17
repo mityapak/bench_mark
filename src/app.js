@@ -1,5 +1,7 @@
-import {BenchModule} from "./benchModule";
-import * as config from "./config";
+import BenchModule from './benchModule';
+import * as config from './config';
 
-// let benchModule =
-    new BenchModule(config.runCount, config.methods);
+
+
+
+let bench = new BenchModule(config.fileName, config.testFile, config.runCount, config.iterationCount);

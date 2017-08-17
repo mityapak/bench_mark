@@ -1,76 +1,90 @@
-import {fork} from "child_process";
-import {table} from "table";
-import Results from './result';
+import {fork} from 'child_process';
+import Result from './result';
+import {table} from 'table';
+import util from 'util';
+import {getMethodsArray} from './getTest'
 
-export class BenchModule extends Results{
-    constructor (runCount, {methodCollection, objectMethod}) {
+export default class BenchModule extends Result {
+    constructor(fileName, testFile, runCount, iterationCount) {
         super();
-        this.runFile = __dirname + '/runTest';
-        this.methodCollection = methodCollection;
-        this.methodObject = objectMethod;
+        this.runFile = __dirname + '/runTests';
+        this.fileName = fileName;
+        this.testFile = testFile;
         this.runCount = runCount;
-        this.childs = [];
-        this.runTest();
+        this.iterrationCount = iterationCount;
+                    this.runTest();
+                };
 
-    };
-    runTest (){
-        console.log(this.methodCollection,this.methodObject)
-        for (let i = 0; i < this.methodCollection.length; i++ ) {
-            let methodName = this.methodCollection[i]
-            for (let j = 0; j < this.runCount; j++) {
-                const child = fork(this.runFile);
-                child.on('message', ({type, data}) => {
-                    switch (true) {
-                        case type === 1:
-                            child.send({
-                                methodObject: this.methodObject ,
-                                methodName
-                            });
-                            break;
+                async runTest() {
+                    let objectTest = this.testFile;
+                    let testArray = [];
+                    testArray.push(objectTest)
+                    let methodsArray = await getMethodsArray(this.testFile)
 
-                        case type === 2:
-                            this.saveResult(data, runCount);
-                            break;
-
-                        case type === 3:
-                            onError(data);
-                            break;
+                    for (let methodName of methodsArray) {
+                        let intermediateResult = await this.startChildProcess(this.fileName, methodName);
+                        await this.saveEverageResult(intermediateResult, this.runCount);
                     }
-                });
+                    this.showResult();
+                };
 
-                this.childs.push(child);
-            }
 
-        }
+                async startChildProcess(fileName, methodName) {
 
-        this.showResult();
+                    let results = [];
+                    for (let i = 0; i < this.runCount; i++) {
+                        results.push(await this.sendTask(fileName, methodName));
+                    }
+                    return results;
+                }
 
-    }
+                async sendTask(fileName, methodName) {
+                    const iterrationCount = this.iterrationCount;
+                    return new Promise((resolve, reject) => {
 
-    showResult(){
-        process.exit(0);
+                        let child = fork(this.runFile);
+
+                        child.on("message", ({type, data}) => {
+                            switch (type) {
+                    case 1:
+                        child.send({
+                            fileName,
+                            methodName,
+                            iterrationCount
+                        });
+                        break;
+
+                    case 2:
+                        resolve(data);
+                        break;
+
+                    case 3:
+                        reject(data);
+                        break;
+                }
+            });
+            child.on("error", (error) => {
+                reject(error)
+            });
+        });
+    };
+
+    showResult() {
         let data, output;
-
-        data = getData (this.resultsCollection);
+        data = getData(this.resultsCollection);
         output = table(data);
-
         console.log(output);
     }
 }
 
-function onError(error) {
-    console.log(error);
-}
 
-function getData (data){
+function getData(data) {
     let dataArray = [];
     let header = Object.getOwnPropertyNames(data[0]);
-
     dataArray.push(header);
-
-    data.forEach (element =>{
+    data.forEach(element => {
         let data = [];
-        for(let value in element){
+        for (let value in element) {
             data.push(element[value])
         }
         dataArray.push(data)
@@ -78,4 +92,3 @@ function getData (data){
     });
     return dataArray;
 }
-
