@@ -1,0 +1,1 @@
+{"version":3,"sources":["tests/createObject.js"],"names":[],"mappings":";qBACe,YAAY,GAAG;AAC1B,eAAW,EAAE,uBAAW;AACpB,YAAI,GAAG,GAAG,IAAI,MAAM,EAAE,CAAA;KACzB;AACD,mBAAe,EAAE,2BAAW;AACxB,YAAI,GAAG,GAAG,EAAE,CAAA;KACf;AACD,oBAAgB,EAAE,4BAAW;AACzB,YAAI,GAAG,GAAG,YAAY,EAAE,CAAA;KAC3B;;CAEJ","file":"createObject.js","sourceRoot":"../../../src"}
